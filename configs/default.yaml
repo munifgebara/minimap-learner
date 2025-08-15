@@ -12,8 +12,8 @@ data:
   grayscale_mode: "single"          # "single" | "replicate_to_rgb"
 
 sampling:
-  min_samples_per_class: 1000         # classes with fewer will be ignored
-  max_samples_per_class: 10000       # classes with more will be randomly downsampled
+  min_samples_per_class: 100         # classes with fewer will be ignored
+  max_samples_per_class: 5000       # classes with more will be randomly downsampled
 
 split:
   train: 0.7
@@ -32,7 +32,7 @@ model:
   freeze_backbone: false
 
 train:
-  epochs: 20
+  epochs: 10
   batch_size: 128
   num_workers: 4
   amp: true
@@ -51,4 +51,4 @@ scheduler:
 
 xai:
   enabled: true
-  per_class_samples: 2
+  per_class_samples: 20
