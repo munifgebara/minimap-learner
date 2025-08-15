@@ -56,8 +56,8 @@ After creating a Zenodo record for this dataset/code, replace the DOI placeholde
   year = {2025},
   publisher = {Zenodo},
   version = {1.0},
-  doi = {10.5281/zenodo.XXXXXXX},
-  url = {https://doi.org/10.5281/zenodo.XXXXXXX}
+  doi = {10.5281/zenodo.16883639},
+  url = {https://doi.org/10.5281/zenodo.16883639}
 }
 ```
 
