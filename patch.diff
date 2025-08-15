@@ -1,0 +1,21 @@
+diff --git a/src/train_eval.py b/src/train_eval.py
+index 3e2f1ad..8c4b9aa 100644
+--- a/src/train_eval.py
++++ b/src/train_eval.py
+@@ -1,10 +1,11 @@
+ from typing import Dict, Tuple, List
+ import os, json, logging
+ import numpy as np
+ from tqdm import tqdm
+-import torch
++import torch                      # <-- garanta que ESTE import está no topo do arquivo
+ import torch.nn as nn
+ from torch.cuda.amp import autocast, GradScaler
+@@ -101,7 +102,6 @@ def _softmax(logits):
+     return e / (e.sum(axis=1, keepdims=True) + 1e-12)
+
+ def evaluate_model(model, loader, device, class_names: List[str], run_dir: str) -> Dict:
+-    import torch                  # <-- REMOVER esta linha
+     """Evaluate model on test set, producing metrics, confusion matrix, and ROC curves."""
+     model.to(device)
+     model.eval()

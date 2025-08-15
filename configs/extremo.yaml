@@ -1,0 +1,61 @@
+# Extreme balanced setup for stress-testing
+seed: 18081975
+
+data:
+  root_dir: "/home/munif/dataset/100Dataset_encrypted_fixed_size"
+  csv_path: "/home/munif/dataset/100Dataset_encrypted_fixed_size/catalogo.csv"
+  csv_key_column: "novo nome"
+  csv_label_columns: ["tipo", "projeto original", "autor"]
+  allowed_extensions: [".png"]
+  expected_size: [128, 128]
+  enforce_size: "validate"
+  input_channels: 1
+  grayscale_mode: "single"
+
+sampling:
+  # Only keep classes with >= 1000 samples; downsample any class to exactly 1000
+  min_samples_per_class: 1000
+  max_samples_per_class: 1000
+
+split:
+  train: 0.7
+  val: 0.15
+  test: 0.15
+
+transforms:
+  # keep raw intensities by default; flip to "normalize" if you want
+  mode: "to_tensor_only"
+  normalize:
+    mean: [0.5]
+    std: [0.5]
+
+model:
+  arch: "resnet18"
+  pretrained: true
+  freeze_backbone: false
+
+train:
+  epochs: 20          # increased as requested
+  batch_size: 128
+  num_workers: 4
+  amp: true
+  early_stopping_patience: 5
+
+optim:
+  name: "adam"
+  lr: 1e-3
+  weight_decay: 1e-4
+  momentum: 0.9
+
+scheduler:
+  name: null
+  step_size: 5
+  gamma: 0.1
+
+# NEW: declare loss preferences so we can use class weights
+loss:
+  class_weight: "balanced"   # options: null | "balanced" | path to weights .npy
+
+xai:
+  enabled: true
+  per_class_samples: 2
