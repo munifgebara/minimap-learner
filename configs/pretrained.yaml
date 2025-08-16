@@ -28,11 +28,11 @@ transforms:
 
 model:
   arch: "resnet18"                  # "resnet18" | "efficientnet_b0" | "vit_b_16"
-  pretrained: false
+  pretrained: true
   freeze_backbone: false
 
 train:
-  epochs: 5                   # inteiro (ok p/ parser). Early stopping decide o fim.
+  epochs: 5              # inteiro (ok p/ parser). Early stopping decide o fim.
   batch_size: 64
   grad_accum_steps: 2
   num_workers: 8
@@ -42,7 +42,7 @@ train:
   amp: "cuda"
   cudnn_benchmark: true
   compile: true
-  early_stopping_patience: 5
+  early_stopping_patience:  5
 
 optim:
   name: "adam"                      # "adam" | "sgd"
