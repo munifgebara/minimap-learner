@@ -295,3 +295,18 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def run_xai_global(run_dir: str, per_class_samples: int = 8, ig_steps: int = 32, out: str | None = None):
+    """Programmatic entrypoint to compute global XAI and write consolidated PDF."""
+    import sys
+    argv = ["xai_global.py", "--run-dir", str(run_dir), "--per-class-samples", str(per_class_samples), "--ig-steps", str(ig_steps)]
+    if out:
+        argv += ["--out", out]
+    # Monkey-patch sys.argv for the existing argparse-based main()
+    old = sys.argv
+    try:
+        sys.argv = argv
+        main()
+    finally:
+        sys.argv = old

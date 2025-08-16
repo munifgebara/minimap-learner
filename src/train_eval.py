@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 import torch
 import torch.nn as nn
-from torch.cuda.amp import autocast, GradScaler
+import torch
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
 from sklearn.preprocessing import label_binarize
 import matplotlib
@@ -52,7 +52,7 @@ def train_model(
             gamma=scheduler_config["gamma"],
         )
 
-    scaler = GradScaler(enabled=amp)
+    scaler = torch.amp.GradScaler('cuda', enabled=amp)
     model.to(device)
 
     best_val_acc = -1.0
@@ -70,11 +70,14 @@ def train_model(
         total = 0
 
         pbar = tqdm(train_loader, desc=f"Epoch {epoch}/{epochs} [train]")
-        for xb, yb in pbar:
+        for batch in pbar:
+            if batch is None:
+                continue
+            xb, yb = batch
             xb, yb = xb.to(device, non_blocking=True), yb.to(device, non_blocking=True)
             optimizer.zero_grad(set_to_none=True)
 
-            with autocast(enabled=amp):
+            with torch.amp.autocast('cuda', enabled=amp):
                 logits = model(xb)
                 loss = criterion(logits, yb)
 
@@ -99,7 +102,10 @@ def train_model(
         val_correct = 0
         val_total = 0
         with torch.no_grad():
-            for xb, yb in tqdm(val_loader, desc=f"Epoch {epoch}/{epochs} [val]"):
+            for batch in tqdm(val_loader, desc=f"Epoch {epoch}/{epochs} [val]"):
+                if batch is None:
+                    continue
+                xb, yb = batch
                 xb, yb = xb.to(device, non_blocking=True), yb.to(device, non_blocking=True)
                 logits = model(xb)
                 loss = criterion(logits, yb)
@@ -155,7 +161,10 @@ def evaluate_model(model, loader, device, class_names: List[str], run_dir: str) 
     all_logits = []
     all_targets = []
     with torch.no_grad():
-        for xb, yb in tqdm(loader, desc="Evaluate[test]"):
+        for batch in tqdm(loader, desc="Evaluate[test]"):
+            if batch is None:
+                continue
+            xb, yb = batch
             xb = xb.to(device, non_blocking=True)
             logits = model(xb)
             all_logits.append(logits.cpu().numpy())

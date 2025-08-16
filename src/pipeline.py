@@ -178,5 +178,32 @@ def run_all(config_path: str, overrides: Dict = None) -> str:
     os.makedirs(os.path.join(run_dir, "metrics"), exist_ok=True)
     with open(os.path.join(run_dir, "metrics", "all_tasks_summary.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
+    
+    # === AUTO_REPORTS: Generate global XAI and consolidated PDF ===
+    try:
+        from .. import xai_global as _xg
+    except Exception:
+        import xai_global as _xg  # fallback if running from project root
+    try:
+        # Prefer programmatic entrypoint if available
+        if hasattr(_xg, "run_xai_global"):
+            _xg.run_xai_global(run_dir, per_class_samples=int(config.get("xai", {}).get("per_class_samples", 8)))
+        else:
+            # Fallback to CLI-style main
+            _xg.main()
+    except Exception as e:
+        logging.warning("xai_global generation failed: %s", e)
+    try:
+        from .. import minimap_report as _mr
+    except Exception:
+        import minimap_report as _mr
+    try:
+        if hasattr(_mr, "generate_report"):
+            _mr.generate_report(run_dir=run_dir, out=None, title=config.get("title", None))
+        else:
+            _mr.main()
+    except Exception as e:
+        logging.warning("minimap_report generation failed: %s", e)
+    # === /AUTO_REPORTS ===
     logging.info("All tasks finished. Summary: %s", summary)
     return run_dir

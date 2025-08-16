@@ -31,7 +31,7 @@ source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 # Train all three tasks (tipo, projeto original, autor):
-python train_minimaps.py --config configs/default.yaml
+python train_minimaps.py --config configs/resnet18.yaml
 ```
 
 ## Outputs

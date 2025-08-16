@@ -29,7 +29,7 @@ def parse_args():
     p.add_argument("--config", type=str, help="Caminho de um YAML específico (modo legado).")
 
     # Novo: varrer uma pasta de configs
-    p.add_argument("--config-dir", type=str, default="config",
+    p.add_argument("--config-dir", type=str, default="configs",
                    help="Pasta com os arquivos YAML (default: config)")
     p.add_argument("--pattern", type=str, default="*.y*ml",
                    help='Glob para encontrar arquivos (default: "*.y*ml")')

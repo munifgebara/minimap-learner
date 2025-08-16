@@ -264,3 +264,19 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def generate_report(run_dir: str, out: str | None = None, title: str | None = None):
+    """Programmatic entrypoint to generate the consolidated PDF report."""
+    import sys
+    argv = ["minimap_report.py", "--run-dir", str(run_dir)]
+    if out:
+        argv += ["--out", out]
+    if title:
+        argv += ["--title", title]
+    old = sys.argv
+    try:
+        sys.argv = argv
+        main()
+    finally:
+        sys.argv = old

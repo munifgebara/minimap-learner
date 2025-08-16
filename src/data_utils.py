@@ -6,11 +6,35 @@ import logging
 import pandas as pd
 import random
 from collections import defaultdict
-from PIL import Image
+from PIL import Image, ImageFile
+
+# Allow opening partially truncated images when possible
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 import torch
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms as T
+
+def _safe_open_grayscale(path: str):
+    """Open image in grayscale; return None on failure."""
+    try:
+        with Image.open(path) as im:
+            im.load()
+            return im.convert("L")
+    except Exception as e:
+        _CORRUPTED_COUNTER['count'] += 1
+        logging.warning("Ignoring corrupted/invalid image: %s (%s: %s)", path, type(e).__name__, e)
+        return None
+
+
+
+def safe_collate(batch):
+    """Filter out None samples. If empty after filtering, return None so the loop can skip."""
+    from torch.utils.data.dataloader import default_collate  # local import
+    batch = [b for b in batch if b is not None]
+    if not batch:
+        return None
+    return default_collate(batch)
 
 from .seeds import worker_init
 
@@ -170,7 +194,13 @@ def create_dataloaders(
     val_ds   = MinimapDataset(val_records,   label_to_id, expected_size, enforce_size, grayscale_mode, transform_eval)
     test_ds  = MinimapDataset(test_records,  label_to_id, expected_size, enforce_size, grayscale_mode, transform_eval)
 
-    train_loader = torch.utils.data.DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers, worker_init_fn=worker_init, pin_memory=True)
-    val_loader   = torch.utils.data.DataLoader(val_ds,   batch_size=batch_size, shuffle=False, num_workers=num_workers, worker_init_fn=worker_init, pin_memory=True)
-    test_loader  = torch.utils.data.DataLoader(test_ds,  batch_size=batch_size, shuffle=False, num_workers=num_workers, worker_init_fn=worker_init, pin_memory=True)
+    train_loader = torch.utils.data.DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers, worker_init_fn=worker_init, pin_memory=True, collate_fn=safe_collate)
+    val_loader   = torch.utils.data.DataLoader(val_ds,   batch_size=batch_size, shuffle=False, num_workers=num_workers, worker_init_fn=worker_init, pin_memory=True, collate_fn=safe_collate)
+    test_loader  = torch.utils.data.DataLoader(test_ds,  batch_size=batch_size, shuffle=False, num_workers=num_workers, worker_init_fn=worker_init, pin_memory=True, collate_fn=safe_collate)
     return train_loader, val_loader, test_loader
+
+
+def get_and_reset_corrupted_count() -> int:
+    c = int(_CORRUPTED_COUNTER.get('count', 0))
+    _CORRUPTED_COUNTER['count'] = 0
+    return c
