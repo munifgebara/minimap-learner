@@ -10,13 +10,6 @@ The pipeline is **clarity-first**, modular, and reproducible (fixed seed). It lo
 saves confusion matrices, ROC curves (micro/macro AUC), classification reports, checkpoints, and XAI (Integrated Gradients).
 
 ## Authors
-**Munif Gebara Jr.**✠¹ (Principal) — ✠munifgebara@gmail.com  
-**Igor S. Wiese**∗³ (Co-advisor) — *igor.wiese@gmail.com*  
-**Yandre M. G. Costa**⁺¹ ² (Advisor) — +yandre@din.uem.br  
-
-1. Graduate Program in Computer Science, State University of Maringá, Maringá, Brazil.  
-2. Department of Informatics, State University of Maringá, Maringá, Brazil.  
-3. Federal University of Technology (UTFPR), Campo Mourão, Brazil.  
 
 ## Dataset & CSV
 Place your images under `data/minimaps_root/` (recursively) and the CSV at `data/catalogo.csv` (or set paths via CLI/YAML).  
