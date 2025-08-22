@@ -50,19 +50,19 @@ Edit `configs/default.yaml` or override via CLI (`--root-dir`, `--csv-path`, `--
 After creating a Zenodo record for this dataset/code, replace the DOI placeholder below.
 
 **BibTeX:**
-[1]M. Gebara Junior, Y. Costae I. Scaliante Wiese, “100 Projetcts Code Minimaps”. Zenodo, ago. 18, 2025. doi: 10.5281/zenodo.16894040.
+
 
 
 
 
 @dataset{minimaps-zenodo,
   title = {Software Feature Detection using Source Code Minimaps as Visual Signatures},
-  author = {Munif Gebara Jr. and Igor S. Wiese and Yandre M. G. Costa},
+  
   year = {2025},
   publisher = {Zenodo},
   version = {1.1},
-  doi = {10.5281/zenodo.16894040},
-  url = {https://zenodo.org/records/16894040}
+  doi = {10.5281/zenodo.16929672},
+  url = {https://zenodo.org/records/16894040](https://zenodo.org/records/16929672}
 }
 
 
